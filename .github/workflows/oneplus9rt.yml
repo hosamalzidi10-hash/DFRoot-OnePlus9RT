@@ -11,7 +11,7 @@ jobs:
   build:
     runs-on: ubuntu-24.04
     env:
-      DFROOT_BUILD_ROOT: ${{ runner.temp }}/dfroot-op9rt
+      DFROOT_BUILD_ROOT: /tmp/dfroot-op9rt
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-java@v4
