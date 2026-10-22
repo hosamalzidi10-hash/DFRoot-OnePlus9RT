@@ -33,7 +33,7 @@ CFLAGS_dfroot_main.o := -Os -Qn -fno-addrsig -fno-asynchronous-unwind-tables \
 # (warnings-as-failures).
 # NOTE: keep in sync with TOOL_ARGS in ../build-ko.sh.
 TOOLS := ARCH=arm64 \
-         CROSS_COMPILE=aarch64-linux-androidkernel- \
+         CROSS_COMPILE=aarch64-linux-gnu- \
          CLANG_TRIPLE=aarch64-linux-gnu- \
          CC=clang LD=ld.lld AR=llvm-ar NM=llvm-nm \
          OBJCOPY=llvm-objcopy OBJDUMP=llvm-objdump \

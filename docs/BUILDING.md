@@ -7,7 +7,7 @@
 
 ```bash
 sudo apt-get update
-sudo apt-get install -y build-essential bc bison flex libssl-dev libelf-dev \
+sudo apt-get install -y build-essential binutils-aarch64-linux-gnu bc bison flex libssl-dev libelf-dev \
     python3 curl git openjdk-21-jdk
 git clone https://github.com/shellovxx/DFRoot-OnePlus9RT.git
 cd DFRoot-OnePlus9RT

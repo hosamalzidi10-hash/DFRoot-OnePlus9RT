@@ -14,7 +14,8 @@ jobs:
       DFROOT_BUILD_ROOT: /tmp/dfroot-op9rt
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/cache@v4
+      - uses: actions/cache/restore@v4
+        id: inputs
         with:
           path: /tmp/dfroot-op9rt/downloads
           key: op9rt-inputs-${{ runner.os }}-${{ hashFiles('upstream.lock.json') }}
@@ -29,12 +30,18 @@ jobs:
       - name: Install build dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y build-essential bc bison flex libssl-dev libelf-dev python3 curl
+          sudo apt-get install -y build-essential binutils-aarch64-linux-gnu bc bison flex libssl-dev libelf-dev python3 curl
           sdkmanager 'platforms;android-37.0' 'build-tools;36.1.0' 'ndk;28.2.13676358' 'cmake;3.22.1'
       - name: Build both modules from source
         run: bash scripts/build-modules.sh
       - name: Build debug APK
         run: bash scripts/build-apk.sh debug
+      - name: Cache downloaded build inputs
+        if: always() && steps.inputs.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: /tmp/dfroot-op9rt/downloads
+          key: op9rt-inputs-${{ runner.os }}-${{ hashFiles('upstream.lock.json') }}
       - uses: actions/upload-artifact@v4
         with:
           name: DFRoot-OnePlus9RT-debug

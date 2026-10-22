@@ -6,7 +6,7 @@ KDIR="$BUILD_ROOT/kernel/op9rt-src"
 TC="$BUILD_ROOT/toolchain/clang-r383902b1"
 DEVICE_DIR="$PROJECT_ROOT/device/oneplus9rt"
 KSU_DIR="$PROJECT_ROOT/third_party/KernelSU/kernel"
-TOOLS=(ARCH=arm64 CROSS_COMPILE=aarch64-linux-androidkernel-
+TOOLS=(ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu-
        CLANG_TRIPLE=aarch64-linux-gnu- CC=clang LD=ld.lld AR=llvm-ar NM=llvm-nm
        OBJCOPY=llvm-objcopy OBJDUMP=llvm-objdump READELF=llvm-readelf
        STRIP=llvm-strip DISABLE_WRAPPER=1)
