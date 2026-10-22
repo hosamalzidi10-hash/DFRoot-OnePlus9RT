@@ -1,0 +1,42 @@
+{
+  "dfroot": {
+    "repository": "https://github.com/diabl0w/DFRoot",
+    "commit": "c274137e8c02b4f94f64d1b132d991b80c747340",
+    "version": "4.6"
+  },
+  "kernelsu": {
+    "repository": "https://github.com/tiann/KernelSU",
+    "commit": "0c0fdb960178fa12d80d6cbcfdcb6ad8be6a865d",
+    "version": "v3.3.1",
+    "version_code": 32680,
+    "uapi": 5,
+    "sources": "third_party/KernelSU"
+  },
+  "vendor_kernel": {
+    "repository": "https://github.com/OnePlusOSS/android_kernel_oneplus_sm8350",
+    "commit": "21e927b4f4c13414a8bfc8d9b8ed20a1cdc2efa0",
+    "url": "https://codeload.github.com/OnePlusOSS/android_kernel_oneplus_sm8350/tar.gz/21e927b4f4c13414a8bfc8d9b8ed20a1cdc2efa0",
+    "sha256": "24bd0dafb24e2c07daae21af68fb5ad6072e6a8c1f1ecd933da15e23da328948"
+  },
+  "kernel_compiler": {
+    "version": "Android clang r383902b1 (11.0.2)",
+    "url": "https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/tags/android-11.0.0_r45/clang-r383902b1.tar.gz",
+    "sha256": "4cf01428c98c2270631ca0afaa4cdceb8c6770926b4821289cf634b8fe4f1e87"
+  },
+  "android": {
+    "java": 21,
+    "gradle": "9.7.1",
+    "agp": "9.4.0",
+    "compile_sdk": 37,
+    "build_tools": "36.1.0",
+    "ndk": "28.2.13676358",
+    "cmake": "3.22.1"
+  },
+  "device": {
+    "name": "OnePlus 9RT",
+    "model_tested": "MT2111",
+    "android_tested": "14",
+    "kernel_release": "5.4.254-qgki-gac311b3399ae",
+    "module_layout_crc": "0xdc7fd1bf"
+  }
+}

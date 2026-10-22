@@ -22,15 +22,9 @@ add_custom_command(
 )
 add_custom_target(splicehelper_bin DEPENDS "${SPLICEHELPER}")
 
+# This port ships one device-specific loader module; see docs/BUILDING.md.
 set(KO_FILES
-    "${JNI_DIR}/ko/dfroot-android12-5.10.ko"
-    "${JNI_DIR}/ko/dfroot-android13-5.10.ko"
-    "${JNI_DIR}/ko/dfroot-android13-5.15.ko"
-    "${JNI_DIR}/ko/dfroot-android14-5.15.ko"
-    "${JNI_DIR}/ko/dfroot-android14-6.1.ko"
-    "${JNI_DIR}/ko/dfroot-android15-6.6.ko"
-    "${JNI_DIR}/ko/dfroot-android16-6.12.ko"
-    "${JNI_DIR}/ko/dfroot-android17-6.18.ko"
+    "${JNI_DIR}/ko/dfroot-android13-5.4.ko"
 )
 
 # AGP only packages lib*.so, so the executable is named libdfroot.so and lands

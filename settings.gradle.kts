@@ -13,5 +13,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "DFRoot"
+rootProject.name = "DFRoot-OnePlus9RT"
 include(":app")

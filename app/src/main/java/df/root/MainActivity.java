@@ -59,7 +59,7 @@ public class MainActivity extends Activity implements IReporter {
         mDeCtx = createDeviceProtectedStorageContext();
         setContentView(R.layout.activity_main);
 
-        getActionBar().setSubtitle("@diabl0w github/xda");
+        getActionBar().setSubtitle("OnePlus 9RT | KernelSU 3.3.1");
 
         btnRun = findViewById(R.id.btnRun);
         outputScroll = findViewById(R.id.outputScroll);
@@ -137,9 +137,13 @@ public class MainActivity extends Activity implements IReporter {
     private void runExploit() {
         try {
             int rc = ExploitRunner.run(mDeCtx, this);
+            // rc=4 is the KernelSU module load failure (marker /dev/dfme3);
+            // rc=1 means ksud itself exited non-zero (/dev/dfme2). They used
+            // to share rc=1, so a module failure was reported as a ksud one.
             String msg = rc == 0 ? "DFRoot: SUCCESS"
                        : rc == 1 ? "DFRoot: Error - ksud nonzero exit"
                        : rc == 2 ? "DFRoot: Error - check logcat & dmesg"
+                       : rc == 4 ? "DFRoot: Error - KernelSU module load failed (see /data/local/tmp/ksu-insmod.log)"
                        : "DFRoot: Error - failed to patch files";
             mMain.post(() -> Toast.makeText(this, msg, Toast.LENGTH_LONG).show());
         } catch (Exception e) {

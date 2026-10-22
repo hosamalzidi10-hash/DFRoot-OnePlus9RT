@@ -244,22 +244,8 @@ extern uint32_t libcxx_ko_target_off;
 
 asm(
     ".section .rodata\n"
-    ".global dfroot_ko_12_5_10_start\n.global dfroot_ko_12_5_10_end\n"
-    "dfroot_ko_12_5_10_start:\n.incbin \"ko/dfroot-android12-5.10.ko\"\ndfroot_ko_12_5_10_end:\n"
-    ".global dfroot_ko_13_5_10_start\n.global dfroot_ko_13_5_10_end\n"
-    "dfroot_ko_13_5_10_start:\n.incbin \"ko/dfroot-android13-5.10.ko\"\ndfroot_ko_13_5_10_end:\n"
-    ".global dfroot_ko_13_5_15_start\n.global dfroot_ko_13_5_15_end\n"
-    "dfroot_ko_13_5_15_start:\n.incbin \"ko/dfroot-android13-5.15.ko\"\ndfroot_ko_13_5_15_end:\n"
-    ".global dfroot_ko_14_5_15_start\n.global dfroot_ko_14_5_15_end\n"
-    "dfroot_ko_14_5_15_start:\n.incbin \"ko/dfroot-android14-5.15.ko\"\ndfroot_ko_14_5_15_end:\n"
-    ".global dfroot_ko_14_6_1_start\n.global dfroot_ko_14_6_1_end\n"
-    "dfroot_ko_14_6_1_start:\n.incbin \"ko/dfroot-android14-6.1.ko\"\ndfroot_ko_14_6_1_end:\n"
-    ".global dfroot_ko_15_6_6_start\n.global dfroot_ko_15_6_6_end\n"
-    "dfroot_ko_15_6_6_start:\n.incbin \"ko/dfroot-android15-6.6.ko\"\ndfroot_ko_15_6_6_end:\n"
-    ".global dfroot_ko_16_6_12_start\n.global dfroot_ko_16_6_12_end\n"
-    "dfroot_ko_16_6_12_start:\n.incbin \"ko/dfroot-android16-6.12.ko\"\ndfroot_ko_16_6_12_end:\n"
-    ".global dfroot_ko_17_6_18_start\n.global dfroot_ko_17_6_18_end\n"
-    "dfroot_ko_17_6_18_start:\n.incbin \"ko/dfroot-android17-6.18.ko\"\ndfroot_ko_17_6_18_end:\n"
+    ".global dfroot_ko_13_5_4_start\n.global dfroot_ko_13_5_4_end\n"
+    "dfroot_ko_13_5_4_start:\n.incbin \"ko/dfroot-android13-5.4.ko\"\ndfroot_ko_13_5_4_end:\n"
 );
 
 asm(
@@ -268,28 +254,14 @@ asm(
     "splice_helper_start:\n.incbin \"splicehelper\"\nsplice_helper_end:\n"
 );
 
-extern char dfroot_ko_12_5_10_start[], dfroot_ko_12_5_10_end[];
-extern char dfroot_ko_13_5_10_start[], dfroot_ko_13_5_10_end[];
-extern char dfroot_ko_13_5_15_start[], dfroot_ko_13_5_15_end[];
-extern char dfroot_ko_14_5_15_start[], dfroot_ko_14_5_15_end[];
-extern char dfroot_ko_14_6_1_start[],  dfroot_ko_14_6_1_end[];
-extern char dfroot_ko_15_6_6_start[],  dfroot_ko_15_6_6_end[];
-extern char dfroot_ko_16_6_12_start[], dfroot_ko_16_6_12_end[];
-extern char dfroot_ko_17_6_18_start[], dfroot_ko_17_6_18_end[];
+extern char dfroot_ko_13_5_4_start[], dfroot_ko_13_5_4_end[];
 extern char splice_helper_start[], splice_helper_end[];
 
 struct KoImage { int android_release, kver_major, kver_minor; const char *start, *end; };
 
 static const struct KoImage *select_ko_image(int andr, int major, int minor) {
     static const struct KoImage imgs[] = {
-        {12, 5, 10, dfroot_ko_12_5_10_start, dfroot_ko_12_5_10_end},
-        {13, 5, 10, dfroot_ko_13_5_10_start, dfroot_ko_13_5_10_end},
-        {13, 5, 15, dfroot_ko_13_5_15_start, dfroot_ko_13_5_15_end},
-        {14, 5, 15, dfroot_ko_14_5_15_start, dfroot_ko_14_5_15_end},
-        {14, 6,  1, dfroot_ko_14_6_1_start,  dfroot_ko_14_6_1_end},
-        {15, 6,  6, dfroot_ko_15_6_6_start,  dfroot_ko_15_6_6_end},
-        {16, 6, 12, dfroot_ko_16_6_12_start, dfroot_ko_16_6_12_end},
-        {17, 6, 18, dfroot_ko_17_6_18_start, dfroot_ko_17_6_18_end},
+        {13, 5, 4, dfroot_ko_13_5_4_start, dfroot_ko_13_5_4_end},
     };
     const struct KoImage *fb = NULL;
     for (size_t i = 0; i < sizeof(imgs)/sizeof(imgs[0]); i++) {
@@ -562,6 +534,7 @@ static int exploit(void) {
         { "/dev/df",    "libc++: loading custom module",                    -1 },
         { "/dev/dfm0",  "kernel module: launching bootstrap",               -1 },
         { "/dev/dfm1",  "bootstrap: loading app preferences file",          -1 },
+        { "/dev/dfm8",  "bootstrap: diagnostic logs saved; KernelSU load skipped", 0 },
         { "/dev/dfme0", "bootstrap: ERROR - reading prefs failed",           1 },
         { "/dev/dfm2",  "bootstrap: cloning zygote env",                    -1 },
         { "/dev/dfmw0", "bootstrap: WARNING - clone zygote env failed",     -1 },
@@ -569,8 +542,10 @@ static int exploit(void) {
         { "/dev/dfmw1", "bootstrap: WARNING - set partitions ro failed",    -1 },
         { "/dev/dfm4",  "bootstrap: disabling ksu modules",                 -1 },
         { "/dev/dfme1", "bootstrap: ERROR - disable modules failed",         1 },
+        { "/dev/dfm7",  "KernelSU: kernel module loaded",                    -1 },
+        { "/dev/dfme3", "KernelSU: ERROR - module load failed; see /data/local/tmp/ksu-insmod.log", 4 },
         { "/dev/dfm5",  "bootstrap: starting SU daemon",                    -1 },
-        { "/dev/dfm6",  "ksud start: SUCCESS",                               0 },
+        { "/dev/dfm6",  "ksud launch: accepted; verify daemon/manager",      0 },
         { "/dev/dfme2", "ksud start: ERROR - ksud nonzero exit",             1 },
     };
     int seen[sizeof(markers)/sizeof(markers[0])] = {0};

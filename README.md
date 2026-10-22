@@ -1,94 +1,64 @@
-<p align="center">
-  <img src=".github/icon.png" width="96" />
-</p>
+# DFRoot для OnePlus 9RT
 
-# DFRoot [DirtyFrag (CVE-2026-43284)]
+Порт [DFRoot](https://github.com/diabl0w/DFRoot) с KernelSU LKM для
+**OnePlus 9RT MT2111, Android 14, ядро `5.4.254-qgki-gac311b3399ae`**.
+Приложение включает собранные для этого ядра `dfroot.ko` и `kernelsu.ko`.
 
-DFRoot is an Android rooting tool that exploits CVE-2026-43284 (DirtyFrag) — a kernel page cache write primitive — to load a custom kernel module without requiring an unlocked bootloader. It is intentionally designed to be SU Manager agnostic and works with any KernelSU-compatible SU manager.
+**Проверенный Manager: официальный [KernelSU v3.3.1 (32680)](https://github.com/tiann/KernelSU/releases/tag/v3.3.1),
+пакет `me.weishu.kernelsu`.** Специальный Manager для 9RT не нужен.
+Совместимость других версий и форков не заявляется.
 
-> [!IMPORTANT]
-> Before hitting that fork button, consider making a pull request instead :)
+## Скачать и запустить
 
-## FAQ
+1. Скачайте подписанный APK из [Releases](https://github.com/shellovxx/DFRoot-OnePlus9RT/releases).
+2. Установите официальный KernelSU Manager v3.3.1 и APK этого порта.
+3. Откройте DFRoot OnePlus 9RT, выберите KernelSU Manager и запустите загрузку.
+4. После успеха перезапустите Manager и выдавайте приложениям root через него.
 
-**Q: Log says patching failed and that my device isn't vulnerable**
+При замене старого DFRoot с другой подписью сначала удалите старое приложение.
+Это сбросит настройки DFRoot; KernelSU Manager — отдельное приложение.
+Принудительного разрешения root для ADB Shell в release-сборке нет.
 
-A: Sorry, there is no fix. Either:
-  - Your device's kernel is too new
-  - Your device manufacturer backported the official mitigation
-  - [Accidental mitigation](https://github.com/V4bel/dirtyfrag/issues/23#issuecomment-4405314290) (typically seen on kernel 6.1)
+Root действует до перезагрузки. Загрузочный раздел этим приложением не
+прошивается. После перезагрузки требуется повторный запуск DFRoot.
+Режим Start on Boot унаследован от DFRoot, но отдельно на этом порте не проверен.
 
-**Q: Log says "SUCCESS" or "ksud exited with error", but I don't have root**
+## Совместимость
 
-A: First, try disabling "Auto Soft Reboot" in DFRoot settings if you have it enabled, otherwise https://github.com/diabl0w/DFRoot/discussions/69
+| Компонент | Состояние проверки |
+| --- | --- |
+| Загрузка LKM и root | Проверены на указанной сборке ядра |
+| SELinux hide | Проверен; глобальный SELinux Enforcing |
+| Mount/umount backend 5.4 | 19 проверок, включая MNT_DETACH и MNT_EXPIRE |
+| Автоматический umount и Individual namespace | Обработчики проверены в изолированном тестовом процессе |
+| Сторонние ZIP-модули и metamodules | Не проверены |
+| Другие прошивки, ядра и модели | Не поддерживаются этой сборкой |
 
-**Q: I installed a module and now I can't launch root without crashing**
+Проверки backend выполнены на предыдущей тестовой сборке. Проверка конкретного
+release APK отмечается отдельно в заметках соответствующего релиза.
+Успех обработчика umount в тестовом процессе не означает проверку каждого
+стороннего приложения или модуля. При поздней загрузке через DFRoot ранние
+init-события уже прошли.
 
-A: Toggle "Disable KSU Modules" in DFRoot settings
+Приложение проверяет модель и точный kernel release перед запуском. После OTA
+данная сборка может перестать подходить; под другое ядро нужна отдельная
+проверка ABI и сборка модулей.
 
-**Q: I installed a module and have "Start at Boot" enabled and now I am bootlooping**
+## Исходники и сборка
 
-A: Typically Android will detect bootloops and boot you into Safe Mode, otherwise you can usually hold the Volume Down button during boot to enter safe mode. From there, disable "Start on Boot" and enable "Disable KSU Modules" in DFRoot settings or just uninstall DFRoot until you stabilize.
-
-## Usage
-
-> [!WARNING]
-> I am not responsible for any damage to your device.
-
-1. Install [DFRoot](https://github.com/diabl0w/DFRoot/releases/latest)
-2. Install a SU Manager from below:
-   - Samsung:
-     - [diabl0w's KernelSU](https://github.com/diabl0w/KernelSU/releases/latest)
-   - Other:
-     - [KernelSU](https://github.com/tiann/KernelSU/releases/latest)
-     - [KernelSU-Next](https://github.com/KernelSU-Next/KernelSU-Next/releases/latest)
-     - [KowSU](https://github.com/KOWX712/KernelSU/releases/latest)
-
-> If you have a custom KernelSU fork for a specific manufacturer, please make a pull request to add it here.
-
-## Features
-
-- Start on Boot
-- Automatic soft reboot (if `late-load --soft-reboot` supported by your SU Manager)
-- RO Partition Protection
-- Disable all KernelSU modules, to recover from a broken one
-- Shizuku not needed — regain root without WiFi!
-
-## How it works
-
-The Android kernel decrypts AES-CBC ESP packets directly into the page cache of files open for `splice()`. By crafting `IV = AES_ECB_DEC(key, current_content) ⊕ desired_content`, any 16-byte-aligned block in a mapped shared library can be overwritten without write permission and without copy-on-write.
-
-The exploit uses this primitive to patch shellcode into `libc++.so` in the kernel's page cache. The next privileged call to the hooked function runs the shellcode, which loads our custom kernel module via `insmod`.
-
-### Exploit chain
-
-1. **IpSec transform** — App allocates a `UdpEncapsulationSocket` + SPI and builds an AES-CBC/HMAC-SHA256 ESP transform via `IpSecManager`.
-
-2. **splicehelper → crash_dump64** — The splicehelper binary is spliced into `crash_dump64` via the CBC primitive. `crash_dump64` runs in the `crash_dump` SELinux domain (via exec label transition), which can open `vendor_file` labeled files (untrusted_app context cannot read these files so we need this bridge). The splicehelper serves two modes: splice mode (pipe a 16-byte page chunk out to the parent for write) and read mode (`argv[3]="r"`, write 16 bytes of file content to a pipe fd for IV computation).
-
-3. **dfroot.ko → vendor_file** — The kernel module is written via the crash_dump bridge (splicehelper splice mode) into a `vendor_file`-labeled file.
-
-4. **libc++ hook** (fires in init, uid=0, tid=1) — Shellcode is patched into `libc++.so` at `std::ostream::sentry::sentry()` (`_ZNSt3__113basic_ostreamIcNS_11char_traitsIcEEE6sentryC1ERS3_`). Triggered by: `createOrphanProcess()` double-forks so the grandchild is adopted by PID 1 (init); when init reaps the orphan its main thread (tid=1) calls through the hooked function. The shellcode:
-   - Checks `getuid()==0` and `gettid()==1`; returns immediately otherwise
-   - Creates `/dev/df` as a one-shot mutex (O_CREAT|O_EXCL) to prevent re-entry
-   - Clones a worker child (parent returns to init immediately)
-   - Worker forks a grandchild; grandchild writes `u:r:vendor_modprobe:s0` to `/proc/self/attr/exec` then execs `/vendor/bin/insmod <ko_target>`
-
-5. **dfroot.ko init** (runs as `vendor_modprobe`, uid=0) — The KO is loaded by `insmod` in the `vendor_modprobe` SELinux domain:
-   - Writes `false` to `selinux_state` (global permissive)
-   - Bypasses DEFEX via kprobes (if applicable)
-   - Calls `call_usermodehelper` to run our custom bootstrap code
-
-6. **bootstrap.c** — performs various functions and finally launches the su daemon from your installed SU Manager.
-
-## Building
-
-```sh
-make
+```text
+app/                       Android-приложение и native загрузчик
+lkm/                       Исходники загрузочного dfroot.ko для 9RT
+third_party/KernelSU/       Исходники kernelsu.ko и общие UAPI-заголовки
+device/oneplus9rt/          Конфигурация, CRC экспортов и необходимые build inputs
+scripts/                   Получение зависимостей, сборка и обязательные ABI/ELF-проверки
+upstream.lock.json         Версии, commits и SHA256 внешних исходников
+docs/BUILDING.md            Пошаговая сборка обоих модулей и APK
 ```
 
-## Credits
+В репозиторий не входят диагностические приложения/скрипты, дампы телефона,
+образы прошивки и базы IDA. Скрипты ABI/ELF нужны для сборки совместимых модулей.
+APK публикуются в Releases; приватные ключи подписи в Git не хранятся.
 
-- Original PoC and various code: https://github.com/lsposed/lspromise
-- SELinux Permissive kernel modules and various code: https://github.com/polygraphene/DFReroot
-- Unprivileged XFRM socket method: https://github.com/combeng6th/DirtyInit
+Инструкция: **[docs/BUILDING.md](docs/BUILDING.md)**.
+Исходные проекты и лицензии: [THIRD_PARTY.md](THIRD_PARTY.md).

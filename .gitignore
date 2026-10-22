@@ -13,6 +13,10 @@ app/.cxx/
 local.properties
 signing.properties
 keystore.jks
+*.jks
+*.keystore
+*.p12
+signing*.properties
 .DS_Store
 
 # LKM build artifacts
@@ -23,6 +27,7 @@ lkm/*.mod
 lkm/*.mod.c
 lkm/*.lto.o
 lkm/*.lds
+lkm/*.ko
 lkm/modules.order
 lkm/Module.symvers
 
@@ -30,3 +35,17 @@ lkm/Module.symvers
 out/
 app/src/main/jni/splicehelper
 app/src/main/jni/ko/*.ko
+app/src/main/assets/*.ko
+third_party/KernelSU/kernel/*.ko
+third_party/KernelSU/kernel/*.mod
+third_party/KernelSU/kernel/*.mod.c
+third_party/KernelSU/kernel/modules.order
+third_party/KernelSU/kernel/Module.symvers
+*.o
+*.cmd
+*.o.d
+*.a
+*.d
+.tmp_versions/
+__pycache__/
+device/oneplus9rt/vendor-build.patch

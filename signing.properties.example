@@ -1,0 +1,5 @@
+# Paths are relative to app/. Keep your real signing.properties out of Git.
+KEYSTORE_FILE=/absolute/private/path/oneplus9rt-release.jks
+KEYSTORE_PASSWORD=replace-me
+KEY_ALIAS=oneplus9rt
+KEY_PASSWORD=replace-me
