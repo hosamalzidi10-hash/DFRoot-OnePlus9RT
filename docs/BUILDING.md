@@ -36,6 +36,8 @@ bash scripts/build-modules.sh
 Скрипт скачивает OnePlus kernel commit
 `21e927b4f4c13414a8bfc8d9b8ed20a1cdc2efa0` и Android clang r383902b1,
 проверяет SHA256 из `upstream.lock.json`, готовит дерево и собирает оба `.ko`.
+Для ядра проверяется архив, для компилятора — содержимое всех файлов, symlinks
+и executable bits: транспортный Gitiles tar содержит меняющиеся timestamps.
 KernelSU уже включён в исходники проекта; отдельный clone Manager не нужен.
 Версия kernel-компонента зафиксирована как 32680, UAPI 5.
 

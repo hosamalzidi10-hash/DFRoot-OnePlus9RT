@@ -21,7 +21,7 @@
   "kernel_compiler": {
     "version": "Android clang r383902b1 (11.0.2)",
     "url": "https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/tags/android-11.0.0_r45/clang-r383902b1.tar.gz",
-    "sha256": "4cf01428c98c2270631ca0afaa4cdceb8c6770926b4821289cf634b8fe4f1e87"
+    "tree_sha256": "71a419e3180ee8634d1e498bcdbf229be9d0f8bf79b2bf2aa755529e001d0349"
   },
   "android": {
     "java": 21,

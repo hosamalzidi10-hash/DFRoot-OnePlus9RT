@@ -4,13 +4,15 @@ source "$(dirname "${BASH_SOURCE[0]}")/common.sh"
 mkdir -p "$BUILD_ROOT/downloads" "$BUILD_ROOT/kernel" "$BUILD_ROOT/toolchain"
 fetch() {
     local group="$1" archive="$2" expected url
-    expected="$(lock_value "$group" sha256)"
     url="$(lock_value "$group" url)"
     if [ ! -f "$archive" ]; then
         curl --fail --location --retry 3 "$url" -o "$archive.part"
         mv "$archive.part" "$archive"
     fi
-    printf '%s  %s\n' "$expected" "$archive" | sha256sum --check --status || die "SHA256 mismatch: $archive"
+    if [ "$group" = vendor_kernel ]; then
+        expected="$(lock_value "$group" sha256)"
+        printf '%s  %s\n' "$expected" "$archive" | sha256sum --check --status || die "SHA256 mismatch: $archive"
+    fi
 }
 kernel_archive="$BUILD_ROOT/downloads/kernel.tar.gz"
 compiler_archive="$BUILD_ROOT/downloads/clang.tar.gz"
@@ -27,6 +29,7 @@ if [ ! -x "$TC/bin/clang" ]; then
     mkdir -p "$TC"
     tar -xzf "$compiler_archive" -C "$TC"
 fi
+python3 "$PROJECT_ROOT/scripts/toolchain-digest.py" "$TC" "$(lock_value kernel_compiler tree_sha256)"
 "$TC/bin/clang" --version | head -n 1
 "$TC/bin/clang" --version | grep -q '11\.0\.2' || die 'Kernel compiler must be clang 11.0.2'
 
