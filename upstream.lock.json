@@ -28,6 +28,7 @@
     "gradle": "9.7.1",
     "agp": "9.4.0",
     "compile_sdk": 37,
+    "sdk_package": "platforms;android-37.0",
     "build_tools": "36.1.0",
     "ndk": "28.2.13676358",
     "cmake": "3.22.1"

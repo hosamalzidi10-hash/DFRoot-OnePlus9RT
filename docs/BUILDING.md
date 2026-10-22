@@ -19,11 +19,12 @@ cd DFRoot-OnePlus9RT
 export ANDROID_HOME="$HOME/Android/Sdk" # ваш путь к SDK
 export PATH="$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools:$PATH"
 sdkmanager --licenses
-sdkmanager 'platforms;android-37' 'build-tools;36.1.0' \
+sdkmanager 'platforms;android-37.0' 'build-tools;36.1.0' \
     'ndk;28.2.13676358' 'cmake;3.22.1'
 ```
 
 Gradle wrapper скачает Gradle 9.7.1. Используется AGP 9.4.0 и JDK 21.
+Пакет платформы API 37 называется `platforms;android-37.0`.
 Если в вашем дистрибутиве нет openjdk-21-jdk, установите JDK 21 отдельно.
 
 ## 2. Оба модуля из исходников
